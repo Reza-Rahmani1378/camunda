@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_04mbldu" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.14.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.19.0">
+  <bpmn:process id="event-based-gateway" name="event-based-gateway" isExecutable="true" camunda:historyTimeToLive="180">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0nwb8su</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0nwb8su" sourceRef="StartEvent_1" targetRef="order-pizza" />
+    <bpmn:sequenceFlow id="Flow_00csc85" sourceRef="order-pizza" targetRef="Gateway_0ame1ds" />
+    <bpmn:eventBasedGateway id="Gateway_0ame1ds">
+      <bpmn:incoming>Flow_00csc85</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ls5kwp</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0el7704</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    <bpmn:intermediateCatchEvent id="pizza-received" name="pizza-received">
+      <bpmn:incoming>Flow_1ls5kwp</bpmn:incoming>
+      <bpmn:outgoing>Flow_1v4qff6</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0eynhg7" messageRef="Message_3pp6st7" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_1ls5kwp" sourceRef="Gateway_0ame1ds" targetRef="pizza-received" />
+    <bpmn:intermediateCatchEvent id="wating" name="waiting period 60 sec">
+      <bpmn:incoming>Flow_0el7704</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gutfrk</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_182w1nk">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT60S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0el7704" sourceRef="Gateway_0ame1ds" targetRef="wating" />
+    <bpmn:sequenceFlow id="Flow_1v4qff6" sourceRef="pizza-received" targetRef="eat-pizza" />
+    <bpmn:userTask id="eat-pizza" name="eat-pizza">
+      <bpmn:incoming>Flow_1v4qff6</bpmn:incoming>
+      <bpmn:incoming>Flow_1p92hlu</bpmn:incoming>
+      <bpmn:outgoing>Flow_005p9lq</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1gutfrk" sourceRef="wating" targetRef="call-pizza-delivery" />
+    <bpmn:userTask id="call-pizza-delivery" name="call-pizza-delivery">
+      <bpmn:incoming>Flow_1gutfrk</bpmn:incoming>
+      <bpmn:outgoing>Flow_1lnh3h3</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1lnh3h3" sourceRef="call-pizza-delivery" targetRef="delivered-pizza" />
+    <bpmn:manualTask id="delivered-pizza" name="delivered-pizza">
+      <bpmn:incoming>Flow_1lnh3h3</bpmn:incoming>
+      <bpmn:outgoing>Flow_1p92hlu</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:sequenceFlow id="Flow_1p92hlu" sourceRef="delivered-pizza" targetRef="eat-pizza" />
+    <bpmn:endEvent id="Event_0ni22ke">
+      <bpmn:incoming>Flow_005p9lq</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_005p9lq" sourceRef="eat-pizza" targetRef="Event_0ni22ke" />
+    <bpmn:userTask id="order-pizza" name="order-pizza">
+      <bpmn:incoming>Flow_0nwb8su</bpmn:incoming>
+      <bpmn:outgoing>Flow_00csc85</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmn:message id="Message_3pp6st7" name="pizza-received" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="event-based-gateway">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="219" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_021tkc7_di" bpmnElement="Gateway_0ame1ds">
+        <dc:Bounds x="425" y="212" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1tcqjef_di" bpmnElement="wating">
+        <dc:Bounds x="532" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="509" y="375" width="83" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0kaqwn2_di" bpmnElement="pizza-received">
+        <dc:Bounds x="522" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="505" y="145" width="71" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0hq9z5f_di" bpmnElement="call-pizza-delivery">
+        <dc:Bounds x="630" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0r3ohmn_di" bpmnElement="delivered-pizza">
+        <dc:Bounds x="800" y="310" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1icf2kn_di" bpmnElement="eat-pizza">
+        <dc:Bounds x="800" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ni22ke_di" bpmnElement="Event_0ni22ke">
+        <dc:Bounds x="1142" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_00gdmmw_di" bpmnElement="order-pizza">
+        <dc:Bounds x="270" y="197" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0nwb8su_di" bpmnElement="Flow_0nwb8su">
+        <di:waypoint x="215" y="237" />
+        <di:waypoint x="270" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00csc85_di" bpmnElement="Flow_00csc85">
+        <di:waypoint x="370" y="237" />
+        <di:waypoint x="425" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ls5kwp_di" bpmnElement="Flow_1ls5kwp">
+        <di:waypoint x="450" y="212" />
+        <di:waypoint x="450" y="120" />
+        <di:waypoint x="522" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0el7704_di" bpmnElement="Flow_0el7704">
+        <di:waypoint x="450" y="262" />
+        <di:waypoint x="450" y="350" />
+        <di:waypoint x="532" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gutfrk_di" bpmnElement="Flow_1gutfrk">
+        <di:waypoint x="568" y="350" />
+        <di:waypoint x="630" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1v4qff6_di" bpmnElement="Flow_1v4qff6">
+        <di:waypoint x="558" y="120" />
+        <di:waypoint x="800" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lnh3h3_di" bpmnElement="Flow_1lnh3h3">
+        <di:waypoint x="730" y="350" />
+        <di:waypoint x="800" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1p92hlu_di" bpmnElement="Flow_1p92hlu">
+        <di:waypoint x="850" y="310" />
+        <di:waypoint x="850" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_005p9lq_di" bpmnElement="Flow_005p9lq">
+        <di:waypoint x="900" y="120" />
+        <di:waypoint x="1142" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
